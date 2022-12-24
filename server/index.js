@@ -29,17 +29,18 @@ const io = new Server(server, {
   },
 });
 
-
-//the work flow of the socket io is like we emit a event with data from front end and the event will listen in back end 
-// on that listen the back end will create another emit and that emit can be called in front end  so finally the data will be 
+//the work flow of the socket io is like we emit a event with data from front end and the event will listen in back end
+// on that listen the back end will create another emit and that emit can be called in front end  so finally the data will be
 // get in  front end
-
-
-
 
 // for listen to the events
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
+
+  // room event
+  socket.on('join_room', (data) => {
+    socket.join(data);
+  });
 
   // listening to the event
   // the name must be same other wise it will not work
@@ -48,7 +49,10 @@ io.on('connection', (socket) => {
     // from here we can make a emit to send the data to all of those conncted to the same server
     // here we broadcating the emit to all of those conntected to this
     // now who ever need the message can listen to this "recive_message"
-    socket.broadcast.emit('recive_message', data);
+    // socket.broadcast.emit('recive_message', data);
+
+    //* sending data to the particular persons who listening to the socket
+    socket.to(data.room).emit('recive_message', data); 
   });
 });
 

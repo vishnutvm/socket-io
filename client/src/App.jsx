@@ -8,6 +8,13 @@ function App() {
   // state for setting the message send
   const [message, setMessage] = useState('');
   const [recivedMessage, setRecivedMessage] = useState('');
+  const [room, setroom] = useState('');
+  // creating the event join room
+  const joinRoom = () => {
+    if (room !== '') {
+      socket.emit('join_room', room);
+    }
+  };
 
   // function which trigger on the sending message
   const sendMessage = () => {
@@ -15,7 +22,9 @@ function App() {
     console.log('button clicked');
     // emiting an action with a action name
     // ! imp the state name will like a key and the value is like the actual message
-    socket.emit('send_message', { message });
+    // socket.emit('send_message', { message });
+    // sending current room along with the message
+    socket.emit('send_message', { message, room });
   };
 
   useEffect(() => {
@@ -31,6 +40,14 @@ function App() {
 
   return (
     <div className="App">
+      <input
+        type="text"
+        placeholder="Room"
+        onChange={(e) => {
+          setroom(e.target.value);
+        }}
+      />
+      <button onClick={joinRoom}>Send message</button>
       <input
         type="text"
         placeholder="Message"
